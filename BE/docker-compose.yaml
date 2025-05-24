@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+
+  api-gateway:
+    image: huybne/api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "8088:8088"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    command: java -Xms64m -Xmx192m -jar /app/api-gateway.jar
+    networks:
+      - microservice-net
+
+  identity-service:
+    image: huybne/identity-service:latest
+    container_name: identity-service
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    command: java -Xms128m -Xmx256m -jar /app/identity-service.jar
+    networks:
+      - microservice-net
+
+  notification-service:
+    image: huybne/notification-service:latest
+    container_name: notification-service
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    command: java -Xms128m -Xmx256m -jar /app/notification-service.jar
+    networks:
+      - microservice-net
+
+  recruitment-service:
+    image: huybne/recruitment_service:latest
+    container_name: recruitment-service
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    command: java -Xms128m -Xmx256m -jar /app/recruitment-service.jar
+    networks:
+      - microservice-net
+
+  profiles-service:
+    image: huybne/profileservice:latest
+    container_name: profiles-service
+    ports:
+      - "8888:8888"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    command: java -Xms128m -Xmx256m -jar /app/ProfileService.jar
+    networks:
+      - microservice-net
+
+  frontend:
+    image: huybne/frontend:latest
+    container_name: frontend
+    ports:
+      - "5174:80"
+    networks:
+      - microservice-net
+  nginx:
+    image: nginx:latest
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - api-gateway
+      - frontend
+    networks:
+      - microservice-net
+
+networks:
+  microservice-net:
+    external: true

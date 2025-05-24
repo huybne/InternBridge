@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a3b19087-deaf-46f8-8edc-13caa0b26336" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="Record" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../project/a2m-config" />
+  </component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2veskvY3PY9tSnDHsNqSq1D6BJP" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "JUnit.All in internship.executor": "Debug",
+    "Maven.discovery-server [clean].executor": "Run",
+    "Maven.discovery-server [compile].executor": "Run",
+    "Maven.discovery-server [package].executor": "Run",
+    "Maven.identity-service [clean].executor": "Run",
+    "Maven.identity-service [compile].executor": "Run",
+    "Maven.identity-service [test].executor": "Run",
+    "Maven.identity-service [validate].executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "Spring Boot.DiscoveryServerApplication.executor": "Debug",
+    "Spring Boot.IdentityServiceApplication (1).executor": "Debug",
+    "Spring Boot.IdentityServiceApplication.executor": "Debug",
+    "Spring Boot.RecommendationServiceApplication.executor": "Debug",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "E:/internship/BE",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.configurations.included.in.services": "true",
+    "settings.editor.selected.configurable": "application.passwordSafe",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mariadb"
+    ]
+  }
+}]]></component>
+  <component name="ReactorSettings">
+    <option name="notificationShown" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\internship\identity-service\src\main\resources" />
+      <recent name="E:\internship\identity-service\src\main\java\com\huybuine\identity_service" />
+      <recent name="E:\internship\recommendation-service\src\main\java\com\internship\recommendation_service" />
+      <recent name="E:\internship" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\internship" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.internship.identity_service.dto.response" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="Application" />
+        <option value="CompoundRunConfigurationType" />
+        <option value="MicronautRunConfigurationType" />
+        <option value="QuarkusRunConfigurationType" />
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+  </component>
+  <component name="RunManager" selected="JUnit.All in internship">
+    <configuration name="All in internship" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="internship" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="DiscoveryServerApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="discovery-server" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.internship.discovery_server.DiscoveryServerApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="IdentityServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="identity-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.internship.identity_service.IdentityServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="RecommendationServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="recommendation-service" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.internship.recommendation_service.RecommendationServiceApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.All in internship" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.15989.150" />
+        <option value="bundled-js-predefined-1d06a55b98c1-91d5c284f522-JavaScript-IU-241.15989.150" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a3b19087-deaf-46f8-8edc-13caa0b26336" name="Changes" comment="" />
+      <created>1744517020652</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1744517020652</updated>
+      <workItem from="1744517021722" duration="1047000" />
+      <workItem from="1744518132166" duration="2302000" />
+      <workItem from="1744524649245" duration="4262000" />
+      <workItem from="1744533499725" duration="124000" />
+      <workItem from="1744533639963" duration="434000" />
+      <workItem from="1744538529452" duration="1926000" />
+      <workItem from="1744540529881" duration="1526000" />
+      <workItem from="1744632107347" duration="2001000" />
+      <workItem from="1744696276388" duration="4314000" />
+      <workItem from="1744704833833" duration="1155000" />
+      <workItem from="1744715988353" duration="2723000" />
+      <workItem from="1744726202405" duration="715000" />
+      <workItem from="1744726929393" duration="1970000" />
+      <workItem from="1744772052082" duration="1621000" />
+      <workItem from="1744788392948" duration="3113000" />
+      <workItem from="1744880773078" duration="482000" />
+      <workItem from="1744884772988" duration="5495000" />
+      <workItem from="1744945274640" duration="12876000" />
+      <workItem from="1744975048916" duration="6482000" />
+      <workItem from="1744993175811" duration="4767000" />
+      <workItem from="1745055759068" duration="5718000" />
+      <workItem from="1745078482950" duration="1745000" />
+      <workItem from="1745118593517" duration="2780000" />
+      <workItem from="1745154156739" duration="11975000" />
+      <workItem from="1745203643781" duration="4504000" />
+      <workItem from="1745217287185" duration="8129000" />
+      <workItem from="1745235401020" duration="5395000" />
+      <workItem from="1745305300936" duration="11951000" />
+      <workItem from="1745319497696" duration="2043000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

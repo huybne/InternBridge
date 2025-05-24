@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb:10.7
+    container_name: maria-db
+    environment:
+      MYSQL_ROOT_PASSWORD: fred
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    networks:
+      - microservice-net
+
+  redis:
+    image: redis:7.2
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      - microservice-net
+
+  mongo:
+    image: mongo:4.4
+    container_name: mongo-db
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: fred
+      MONGO_INITDB_ROOT_PASSWORD: fred
+      MONGO_INITDB_DATABASE: internship
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - microservice-net
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    networks:
+      - microservice-net
+
+  eureka-server:
+    image: huybne/discovery-server:latest
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    command: java -Xms64m -Xmx192m -jar /app/discovery-server.jar
+    networks:
+      - microservice-net
+
+networks:
+  microservice-net:
+    driver: bridge
+
+volumes:
+  mariadb-data:
+  redis-data:
+  mongo-data:
