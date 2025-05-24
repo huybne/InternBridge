@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "types": ["node", "react", "react-dom"],
+    "strict": true, // Bật chế độ kiểm tra chặt chẽ hơn
+    "noImplicitAny": false, // Tắt cảnh báo về kiểu 'any'
+    "skipLibCheck": true, // Bỏ qua kiểm tra thư viện
+    "esModuleInterop": true, // Cải thiện tương thích với ES modules
+    "allowJs": true // Cho phép biên dịch file JavaScript cùng với TypeScript
+  },
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}

@@ -1,0 +1,46 @@
+.verify-notice-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0;
+  background-color: #f4faff; /* nền nhạt xanh */
+}
+
+.verify-notice-box {
+  background-color: white;
+  border: 1px solid #e0f0ff;
+  border-left: 6px solid #00b14f; /* màu xanh TopCV */
+  padding: 24px 32px;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.verify-title {
+  font-size: 20px;
+  color: #00b14f;
+  margin-bottom: 12px;
+  font-weight: bold;
+}
+
+.verify-message {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.verify-button {
+  padding: 10px 20px;
+  background-color: #00b14f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background-color 0.3s ease;
+}
+
+.verify-button:hover {
+  background-color: #009e45;
+}

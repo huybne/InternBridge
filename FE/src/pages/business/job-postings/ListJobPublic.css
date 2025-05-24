@@ -1,0 +1,35 @@
+.custom-checkbox {
+  display: none;
+}
+
+.custom-checkbox:checked + label {
+  background-color: #ff4d4d; /* Red when checked */
+}
+
+.custom-checkbox + label {
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+  background-color: #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.3s;
+}
+
+.custom-checkbox + label::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.custom-checkbox:checked + label::before {
+  transform: translateX(20px);
+}

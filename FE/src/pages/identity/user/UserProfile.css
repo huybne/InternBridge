@@ -1,0 +1,194 @@
+/* UserProfile.css */
+
+.user-profile-page {
+  font-family: 'Helvetica Neue', sans-serif;
+  background-color: #f7f7f7;
+}
+
+.profile-box-centered {
+  margin-top: 30px;
+  padding: 40px 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.profile-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid #0fdc74;
+  object-fit: cover;
+}
+
+.edit-avatar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background: #0fdc74;
+  color: white;
+  border-radius: 50%;
+  padding: 5px 6px;
+  font-size: 12px;
+}
+
+.badge-active {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #c4f0d0;
+  color: #28a745;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+.username {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.designation {
+  color: #888;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.profile-stats {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.stat-box {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.stat-number {
+  font-size: 28px;
+  font-weight: bold;
+  display: block;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #555;
+}
+
+.stat-red { color: #f5426c; }
+.stat-blue { color: #28a8e0; }
+.stat-green { color: #37d67a; }
+
+.detail-footer-social {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.detail-footer-social li a {
+  color: #333;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  padding: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  transition: 0.3s;
+}
+
+.detail-footer-social li a:hover {
+  background-color: #0fdc74;
+  color: white;
+  border-color: #0fdc74;
+}
+
+.button-group {
+  margin-top: 20px;
+}
+
+.footer-btn {
+  padding: 10px 20px;
+  margin: 0 10px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.footer-btn.grn-btn {
+  background-color: #0fdc74;
+  color: white;
+}
+
+.footer-btn.blu-btn {
+  background-color: #28a8e0;
+  color: white;
+}
+
+/* Tabs section styling */
+.nav-tabs {
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+}
+
+.nav-tabs > li {
+  display: inline-block;
+  margin-right: 15px;
+}
+
+.nav-tabs > li a {
+  padding: 10px 15px;
+  display: inline-block;
+  background: #f5f5f5;
+  border-radius: 5px 5px 0 0;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #555;
+  border: 1px solid #ddd;
+  border-bottom: none;
+}
+
+.nav-tabs > li.active a {
+  background-color: #0fdc74;
+  color: white;
+}
+
+.tab-content {
+  background: white;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 5px 5px;
+}
+
+.table-bordered {
+  width: 100%;
+  border: 1px solid #ddd;
+}
+
+.table-bordered td {
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+.table-bordered td:first-child {
+  font-weight: bold;
+  background: #f9f9f9;
+}

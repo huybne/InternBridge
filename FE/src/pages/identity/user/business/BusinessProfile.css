@@ -1,0 +1,307 @@
+/* UserProfile.css */
+
+.business-profile-page {
+  font-family: 'Helvetica Neue', sans-serif;
+  background-color: #f7f7f7;
+}
+
+.profile-box-centered {
+  margin-top: 30px;
+  padding: 40px 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.profile-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.avatar-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid #0fdc74;
+  object-fit: cover;
+}
+
+.edit-avatar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background: #0fdc74;
+  color: white;
+  border-radius: 50%;
+  padding: 5px 6px;
+  font-size: 12px;
+}
+
+.badge-active {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #c4f0d0;
+  color: #28a745;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+.badge-inactive {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #f0c4c4;
+  color: #dc525e;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+.username {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.designation {
+  color: #888;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.profile-stats {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.stat-box {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.stat-number {
+  font-size: 28px;
+  font-weight: bold;
+  display: block;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #555;
+}
+
+.stat-red {
+  color: #f5426c;
+}
+.stat-blue {
+  color: #28a8e0;
+}
+.stat-green {
+  color: #37d67a;
+}
+
+.detail-footer-social {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.detail-footer-social div {
+  width: 40px;
+  height: 40px;
+  background-color: #eaeaea;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.detail-footer-social div a {
+  color: #555;
+  font-size: 18px;
+  text-decoration: none;
+}
+
+.detail-footer-social div:hover {
+  transform: scale(1.1);
+}
+
+/* Màu hover tương ứng */
+.detail-footer-social div:nth-child(1):hover {
+  background-color: #3b5998; /* Facebook */
+}
+
+.detail-footer-social div:nth-child(1):hover a {
+  color: white;
+}
+
+.detail-footer-social div:nth-child(2):hover {
+  background-color: #db4437; /* Google+ */
+}
+
+.detail-footer-social div:nth-child(2):hover a {
+  color: white;
+}
+
+.detail-footer-social div:nth-child(3):hover {
+  background-color: #1da1f2; /* Twitter */
+}
+
+.detail-footer-social div:nth-child(3):hover a {
+  color: white;
+}
+
+.detail-footer-social div:nth-child(4):hover {
+  background-color: #0077b5; /* LinkedIn */
+}
+
+.detail-footer-social div:nth-child(4):hover a {
+  color: white;
+}
+
+.detail-footer-social div:nth-child(5):hover {
+  background-color: #e1306c; /* Instagram */
+}
+
+.detail-footer-social div:nth-child(5):hover a {
+  color: white;
+}
+
+.footer-btn {
+  padding: 10px 20px;
+  margin: 0 10px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.footer-btn.grn-btn {
+  background-color: #0fdc74;
+  color: white;
+}
+
+.footer-btn.blu-btn {
+  background-color: #28a8e0;
+  color: white;
+}
+
+/* Tabs section styling */
+.nav-tabs {
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+}
+
+.nav-tabs > li {
+  display: inline-block;
+  margin-right: 15px;
+}
+
+.nav-tabs > li a {
+  padding: 10px 15px;
+  display: inline-block;
+  background: #f5f5f5;
+  border-radius: 5px 5px 0 0;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #555;
+  border: 1px solid #ddd;
+  border-bottom: none;
+}
+
+.nav-tabs > li.active a {
+  background-color: #0fdc74;
+  color: white;
+}
+
+.tab-content {
+  background: white;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-top: none;
+  border-radius: 0 0 5px 5px;
+}
+
+.table-bordered {
+  width: 100%;
+  border: 1px solid #ddd;
+}
+
+.table-bordered td {
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+.table-bordered td:first-child {
+  font-weight: bold;
+  background: #f9f9f9;
+}
+
+.business-info-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.business-details {
+  flex: 1 1 50%;
+}
+
+.business-images {
+  flex: 1 1 50%;
+}
+
+.image-gallery {
+  display: grid;
+  /* grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); */
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.image-card {
+  position: relative;
+  width: 200px;
+}
+
+.image-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+  /* border-radius: 8px; */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.delete-button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background-color: rgba(255, 0, 0, 0.8);
+  border: none;
+  color: white;
+  font-size: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.delete-button:hover {
+  background-color: rgba(255, 0, 0, 1);
+}

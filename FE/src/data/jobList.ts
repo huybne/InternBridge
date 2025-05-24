@@ -1,0 +1,38 @@
+export const jobList = [
+  {
+    title: 'Web Developer',
+    company: 'Google',
+    image: 'assets/img/com-1.jpg',
+    type: 'Part Time',
+    location: 'QBL Park, C40',
+    salary: '$110 - 200',
+    tag: null,
+  },
+  {
+    title: 'Web Developer',
+    company: 'Google',
+    image: 'assets/img/com-2.jpg',
+    type: 'Freelancer',
+    location: 'QBL Park, C40',
+    salary: '$110 - 200',
+    tag: 'Premium',
+  },
+  {
+    title: 'Web Developer',
+    company: 'Google',
+    image: 'assets/img/com-3.jpg',
+    type: 'Enternship',
+    location: 'QBL Park, C40',
+    salary: '$110 - 200',
+    tag: null,
+  },
+  {
+    title: 'Web Developer',
+    company: 'Google',
+    image: 'assets/img/com-3.jpg',
+    type: 'Enternship',
+    location: 'QBL Park, C40',
+    salary: '$110 - 200',
+    tag: null,
+  },
+];

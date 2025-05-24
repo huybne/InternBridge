@@ -1,0 +1,72 @@
+.security-settings-page {
+    padding-top: 80px;
+    padding-bottom: 40px;
+    background-color: #f7f7f7;
+    min-height: 100vh;
+  }
+  
+  .container.white-shadow {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  
+  label {
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 6px;
+    display: block;
+  }
+  
+  .security-input {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  
+  .security-input:focus {
+    border-color: #66afe9;
+    outline: none;
+  }
+  
+  .btn-save {
+    background-color: #28a745;
+    color: white;
+    padding: 8px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .btn-save:hover {
+    background-color: #218838;
+  }
+  
+  .btn-danger {
+    background-color: #dc3545;
+    color: white;
+    padding: 8px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .btn-danger:hover {
+    background-color: #c82333;
+  }
+  
