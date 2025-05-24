@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.a2m.profileservice.mapper.ImagesBusinessMapper">
+
+    <resultMap id="ImagesBusinessResultMap" type="com.a2m.profileservice.model.ImagesBusiness"
+        >
+        <id property="imageId" column="image_id" />
+        <result property="businessId" column="business_id" />
+        <result property="imageUrl" column="image_url" />
+        <result property="isDeleted" column="is_deleted" jdbcType="BOOLEAN" />
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <!-- Thêm ảnh cho business -->
+    <insert id="insertImagesBusiness" parameterType="com.a2m.profileservice.model.ImagesBusiness">
+        INSERT INTO profile_service.images_business (image_id,business_id, image_url, is_deleted, created_at)
+        VALUES (#{imageId}, #{businessId}, #{imageUrl}, #{isDeleted}, #{createdAt})
+    </insert>
+
+    <!-- Xoá ảnh của business -->
+    <update id="deleteImagesBusinessById" parameterType="String">
+        UPDATE profile_service.images_business
+        SET is_deleted = true
+        WHERE image_id = #{imageId}
+    </update>
+
+    <!-- Lấy danh sách ảnh của business -->
+    <select id="getImagesBusinessByBusinessId" parameterType="String" resultMap="ImagesBusinessResultMap">
+        SELECT * FROM profile_service.images_business
+        WHERE business_id = #{businessId} AND is_deleted = 0
+    </select>
+
+    <!-- Lấy ảnh đầu tiên làm avatar -->
+    <select id="getFirstImageBusinessByBusinessId" parameterType="String" resultMap="ImagesBusinessResultMap">
+        SELECT * FROM profile_service.images_business
+        WHERE business_id = #{businessId} AND is_deleted = false
+        ORDER BY created_at ASC
+        LIMIT 1
+    </select>
+
+    <!-- Lấy ảnh theo imageId -->
+    <select id="getImagesBusinessByImageId" parameterType="String" resultMap="ImagesBusinessResultMap">
+        SELECT * FROM profile_service.images_business
+        WHERE image_id = #{imageId} AND is_deleted = false
+    </select>
+</mapper>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.internship.recruitment_service.mapper.ApplyJobsMapper">
+
+    <!-- Mapping từ bảng apply_jobs sang model ApplyJobs -->
+    <resultMap id="ApplyJobsResultMap" type="com.internship.recruitment_service.model.ApplyJobs">
+        <id property="applyId" column="apply_id"/>
+        <result property="jobId" column="job_id"/>
+        <result property="studentId" column="student_id"/>
+        <result property="cvId" column="cv_id"/>
+        <result property="studentName" column="student_name"/>
+        <result property="studentDateOfBirth" column="student_date_of_birth"/>
+        <result property="studentUniversity" column="student_university"/>
+        <result property="studentAvatarUrl" column="student_avatar_url"/>
+        <result property="status" column="status"/>
+        <result property="appliedAt" column="applied_at"/>
+        <result property="viewedAt" column="viewed_at"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="jobTitle" column="job_title"/>
+
+    </resultMap>
+
+    <resultMap id="ApplyJobDTOResultMap" type="com.internship.recruitment_service.dto.ApplyJobsResponse.ApplyJobDTO">
+        <id property="applyId" column="apply_id"/>
+        <result property="jobId" column="job_id"/>
+        <result property="jobTitle" column="job_title"/>
+        <result property="companyName" column="company_name"/>
+        <result property="location" column="location"/>
+        <result property="salary" column="salary"/>
+        <result property="applyStatus" column="apply_status"/>
+        <result property="applyDate" column="apply_date"/>
+        <result property="jobStatus" column="job_status"/>
+        <result property="cvId" column="cv_id"/>
+    </resultMap>
+
+    <!-- Gửi đơn ứng tuyển -->
+    <insert id="insertApplyJob" parameterType="com.internship.recruitment_service.model.ApplyJobs">
+        INSERT INTO apply_jobs (apply_id, job_id, student_id, cv_id, student_name,
+                                student_date_of_birth, student_university,
+                                student_avatar_url, status, applied_at)
+        VALUES (#{applyId}, #{jobId}, #{studentId}, #{cvId}, #{studentName},
+                #{studentDateOfBirth}, #{studentUniversity}, #{studentAvatarUrl},
+                'pending', NOW())
+    </insert>
+
+    <!-- Thay đổi cvid đơn ứng tuển -->
+    <update id="updateCvId">
+        UPDATE apply_jobs
+        SET cv_id = #{cvId}, updated_at = NOW()
+        WHERE apply_id = #{applyId} AND is_deleted = 0
+    </update>
+
+    <!-- Xem tất cả đơn ứng tuyển của sinh viên -->
+    <select id="getAllApplyJobsByJobId" resultMap="ApplyJobsResultMap" parameterType="java.lang.String">
+        SELECT *
+        FROM apply_jobs
+        WHERE job_id = #{jobId}
+          AND is_deleted = 0
+        <if test="cursor != null">
+            AND applied_at &lt; #{cursor}
+        </if>
+        ORDER BY applied_at DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- Cập nhật trạng thái khi xem chi tiết đơn ứng tuyển -->
+    <update id="updateApplyJobStatus" parameterType="java.lang.String">
+        UPDATE apply_jobs
+        SET status = 'viewed', viewed_at = NOW()
+        WHERE apply_id = #{applyId} AND is_deleted = 0
+    </update>
+
+    <!-- Cập nhật accept / reject trạng thái đơn ứng tuyển -->
+    <update id="updateApplyJobStatusAcceptOrReject" parameterType="java.lang.String">
+        UPDATE apply_jobs
+        SET status = #{status}, updated_at = NOW()
+        WHERE apply_id = #{applyId} AND is_deleted = 0
+    </update>
+
+    <!-- Xem chi tiết đơn ứng tuyển -->
+    <select id="getDetailApplyJobByApplyId" resultMap="ApplyJobsResultMap" parameterType="java.lang.String">
+        SELECT
+            a.*,
+            j.title AS job_title
+        FROM
+            apply_jobs a
+                JOIN
+            job_postings j ON a.job_id = j.job_id
+        WHERE
+            a.apply_id = #{applyId}
+    </select>
+
+    <!-- Kiểm tra xem apply_id có tồn tại không -->
+    <select id="checkApplyIdExists" resultType="int" parameterType="java.lang.String">
+        SELECT COUNT(*) > 0
+        FROM apply_jobs
+        WHERE apply_id = #{applyId} AND is_deleted = 0
+    </select>
+
+    <!-- Kiểm tra đơn ứng tuyển đã tồn tại -->
+    <select id="findApplyByStudentIdAndJobId" resultMap="ApplyJobsResultMap">
+        SELECT *
+        FROM apply_jobs
+        WHERE student_id = #{studentId} AND job_id = #{jobId} AND is_deleted = 0
+        LIMIT 1
+    </select>
+
+    <!-- Sinh viên xem toàn bộ đơn ứng tuyển của mình -->
+    <select id="getAllApplyJobsByStudentId"
+            resultMap="ApplyJobDTOResultMap"
+            parameterType="map">
+        SELECT
+        a.apply_id,
+        a.job_id,
+        a.cv_id,
+        a.status AS apply_status,
+        a.applied_at AS apply_date,
+        j.title AS job_title,
+        j.company_name,
+        j.location,
+        j.salary,
+        j.status AS job_status
+        FROM
+        apply_jobs a
+        JOIN
+        job_postings j ON a.job_id = j.job_id
+        WHERE
+        a.student_id = #{studentId}
+        AND a.is_deleted = 0
+        <if test="status != null">
+            AND a.status = #{status}
+        </if>
+
+        <if test="cursor != null">
+            AND a.applied_at &lt; #{cursor}
+        </if>
+        ORDER BY a.applied_at DESC
+        LIMIT #{limit}
+    </select>
+    <select id="getApplyJobForInterview" resultMap="ApplyJobsResultMap" parameterType="java.lang.String">
+        SELECT
+            a.*,
+            j.title AS job_title
+        FROM
+            apply_jobs a
+                JOIN job_postings j ON a.job_id = j.job_id
+        WHERE
+            a.apply_id = #{applyId}
+          AND a.is_deleted = 0
+          AND j.is_deleted = 0
+    </select>
+
+    <update id="updateStudentInfo">
+        UPDATE apply_jobs
+        SET
+            student_name = COALESCE(#{fullName}, student_name),
+            student_date_of_birth = COALESCE(#{dateOfBirth}, student_date_of_birth),
+            student_university = COALESCE(#{university}, student_university),
+            student_avatar_url = COALESCE(#{avatarUrl}, student_avatar_url),
+            updated_at = NOW()
+        WHERE student_id = #{userId}
+    </update>
+
+
+</mapper>

@@ -1,0 +1,26 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: notification-service
+  rabbitmq:
+    host:  localhost
+    port: 5672
+    username: admin
+    password: admin
+  data:
+    mongodb:
+      uri: mongodb://fred:fred@localhost:27017/notification_db?authSource=admin
+#      uri: mongodb://fred:fred@localhost:27017/notification_db?authSource=admin
+
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true

@@ -1,0 +1,37 @@
+# === Build outputs ===
+target/
+build/
+*.jar
+*.war
+
+# === Maven Wrapper ===
+!.mvn/wrapper/maven-wrapper.jar
+
+# === IDE config ===
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code
+.vscode/
+
+# Eclipse / Spring Tool Suite (STS)
+.classpath
+.project
+.settings/
+.apt_generated
+.factorypath
+.springBeans
+.sts4-cache
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# === Misc ===
+HELP.md

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.internship.identity_service.mapper.RoleMapper">
+    <resultMap id="RoleResultMap" type="com.internship.identity_service.model.Role">
+        <id property="roleId" column="role_id" />
+        <result property="roleName" column="role_name" />
+        <result property="permissions" column="permissions" />
+        <result property="createdAt" column="created_at" />
+    </resultMap>
+
+    <select id="findAll" resultMap="RoleResultMap">
+        SELECT * FROM roles WHERE 1=1
+    </select>
+
+    <select id="findById" resultMap="RoleResultMap" parameterType="int">
+        SELECT * FROM roles WHERE role_id = #{roleId}
+    </select>
+
+    <insert id="create" parameterType="com.internship.identity_service.model.Role"
+            useGeneratedKeys="true" keyProperty="roleId">
+        INSERT INTO roles(role_name, permissions)
+        VALUES (#{roleName}, #{permissions})
+    </insert>
+
+    <update id="update" parameterType="com.internship.identity_service.model.Role">
+        UPDATE roles
+        <set>
+            <if test="roleName != null">
+                role_name = #{roleName},
+            </if>
+            <if test="permissions != null">
+                permissions = #{permissions},
+            </if>
+        </set>
+        WHERE role_id = #{roleId}
+    </update>
+
+    <delete id="delete" parameterType="int">
+        DELETE FROM roles WHERE role_id = #{roleId}
+    </delete>
+
+    <select id="findByName" resultMap="RoleResultMap" parameterType="string">
+        SELECT * FROM roles WHERE role_name = #{roleName}
+    </select>
+
+    <!-- NEW: Get roles by userId using user_roles -->
+    <select id="findRolesByUserId" resultMap="RoleResultMap" parameterType="string">
+        SELECT r.* FROM roles r
+                            JOIN user_roles ur ON r.role_id = ur.role_id
+        WHERE ur.user_id = #{userId}
+    </select>
+</mapper>

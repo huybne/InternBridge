@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8">
+    <title>Xác minh thành công</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f0f9f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background-color: white;
+            padding: 40px 60px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .card h2 {
+            color: #28a745;
+            font-size: 24px;
+        }
+
+        .card p {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2>🎉 Xác minh thành công!</h2>
+    <p>Tài khoản của bạn đã được xác minh và tạo thành công.</p>
+    <a class="btn" href="http://localhost:5173/login">Đăng nhập ngay</a>
+</div>
+</body>
+</html>

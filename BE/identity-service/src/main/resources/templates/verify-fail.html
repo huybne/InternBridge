@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Xác minh thất bại</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #fff5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            background-color: white;
+            padding: 40px 60px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .card h2 {
+            color: #dc3545;
+            font-size: 24px;
+        }
+
+        .card p {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #666;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #dc3545;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2>❌ Xác minh thất bại!</h2>
+    <p>Liên kết xác minh không hợp lệ hoặc đã hết hạn.</p>
+    <a class="btn" href="https://your-frontend-domain.com/register">Thử lại đăng ký</a>
+</div>
+</body>
+</html>

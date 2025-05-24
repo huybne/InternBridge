@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.a2m.profileservice.mapper.StudentCardMapper">
+    <resultMap id="StudentCardResultMap" type="com.a2m.profileservice.model.StudentCard">
+        <result property="cardId" column="card_id"/>
+        <result property="studentId" column="student_id"/>
+        <result property="studentCardUrl" column="student_card_url"/>
+        <result property="isDeleted" column="is_deleted" javaType="boolean"/>
+    </resultMap>
+
+
+    <!-- Insert StudentCard -->
+    <insert id="CreateStudentCard" parameterType="com.a2m.profileservice.model.StudentCard">
+        INSERT INTO student_cards (card_id, student_id, student_card_url, is_deleted)
+        VALUES (uuid(), #{studentId}, #{studentCardUrl}, 0)
+    </insert>
+
+    <!-- Lấy StudentCard theo studentId và kiểm tra is_deleted != 1 -->
+    <select id="getStudentCardByStudentId" resultMap="StudentCardResultMap">
+        SELECT card_id, student_id, student_card_url, is_deleted
+        FROM student_cards
+        WHERE student_id = #{studentId} AND is_deleted != 1
+    </select>
+
+
+    <update id="DeleteStudentCard" parameterType="String">
+        UPDATE student_cards
+        SET is_deleted = 1
+        WHERE card_id = #{id}
+    </update>
+
+
+
+
+
+
+
+</mapper>

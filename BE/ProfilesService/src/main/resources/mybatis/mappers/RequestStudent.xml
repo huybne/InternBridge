@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.a2m.profileservice.mapper.RequestStudentMapper">
+
+    <!-- Map kết quả từ cơ sở dữ liệu thành User -->
+    <resultMap id="requestStudentsResultMap" type="RequestStudents">
+        <id property="requestId" column="request_id"/>
+        <result property="studentId" column="student_id"/>
+        <result property="reason" column="reason"/>
+        <result property="sendTime" column="send_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status"/>
+        <result property="isDeleted" column="is_deleted" javaType="boolean" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <!-- Kiểm tra request sinh viên tồn tại -->
+    <select id="checkRequestStudentExists" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM request_students
+        WHERE student_id = #{student_id}
+          AND status = 'pending'
+          AND is_deleted = 0
+    </select>
+
+    <!-- Kiểm tra đã đăng ký hoặc được duyệt -->
+    <select id="checkRequestStudentAlreadyRegistered" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM request_students
+        WHERE student_id = #{student_id}
+          AND (status = 'pending' OR status = 'approve')
+          AND is_deleted = 0
+    </select>
+
+    <!-- Gửi yêu cầu xác thực sinh viên -->
+    <insert id="SendRequest">
+        INSERT INTO request_students
+            (request_id, student_id, reason, send_time, status, is_deleted)
+        VALUES
+            (uuid(), #{student_id}, null, NOW(), 'pending', 0)
+    </insert>
+
+    <!-- Lấy request mới nhất theo student_id -->
+    <select id="GetRequestStudent" parameterType="string" resultType="RequestStudents" resultMap="requestStudentsResultMap">
+        SELECT
+            request_id,
+            student_id,
+            reason,
+            send_time,
+            status,
+            is_deleted
+        FROM
+            request_students
+        WHERE
+            student_id = #{student_id}
+          AND is_deleted = 0
+        ORDER BY
+            send_time DESC
+            LIMIT 1
+    </select>
+
+
+
+
+
+    <!-- Lấy request sinh viên theo status -->
+    <select id="getRequestStudentByStatus" parameterType="string" resultMap="requestStudentsResultMap">
+        SELECT * FROM request_students
+        WHERE is_deleted = 0 AND status = #{status}
+        ORDER BY send_time DESC
+    </select>
+
+
+    <select id="checkApproved" resultType="boolean" parameterType="string">
+        SELECT COUNT(1) > 0
+        FROM request_students
+        WHERE student_id = #{id} AND status = 'approve'
+    </select>
+
+    <!-- Lấy tất cả request chưa xoá -->
+    <select id="getAllRequestStudents" resultMap="requestStudentsResultMap">
+        SELECT * FROM request_students
+        WHERE is_deleted = 0
+        ORDER BY send_time DESC
+    </select>
+
+
+
+    <!-- Lấy request theo request_id -->
+    <select id="getRequestStudentById" parameterType="string" resultMap="requestStudentsResultMap">
+        SELECT * FROM request_students
+        WHERE request_id = #{requestId}
+          AND is_deleted = 0
+    </select>
+
+
+
+    <update id="updateRequestStudentStatus">
+        UPDATE request_students
+        SET status = #{status}
+        WHERE request_id = #{requestId}
+          AND is_deleted = 0
+    </update>
+
+    <update id="updateRejectReason">
+        UPDATE request_students
+        SET reason = #{reason}
+        WHERE request_id = #{requestId}
+    </update>
+
+<!--    get request theo offset-->
+    <select id="getRequestStudentsByOffset" parameterType="map" resultMap="requestStudentsResultMap">
+        SELECT rs.*, sp.full_name, sp.university
+        FROM request_students rs
+        JOIN student_profiles sp ON rs.student_id = sp.profile_id
+        WHERE rs.is_deleted = 0
+        <if test="status != null">
+            AND rs.status = #{status}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (
+            sp.full_name LIKE CONCAT('%', #{keyword}, '%')
+            OR sp.university LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+        ORDER BY rs.send_time DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countRequestStudents" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM request_students rs
+        JOIN student_profiles sp ON rs.student_id = sp.profile_id
+        WHERE rs.is_deleted = 0
+        <if test="status != null">
+            AND rs.status = #{status}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (
+            sp.full_name LIKE CONCAT('%', #{keyword}, '%')
+            OR sp.university LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+    </select>
+
+
+    <select id="getAvatarByStudentId" parameterType="string" resultType="string">
+        SELECT avatar_url
+        FROM student_profiles
+        WHERE profile_id = #{studentId}
+    </select>
+
+    <select id="getUniversityByStudentId" parameterType="string" resultType="string">
+        SELECT university
+        FROM student_profiles
+        WHERE profile_id = #{studentId}
+    </select>
+
+</mapper>
+
+

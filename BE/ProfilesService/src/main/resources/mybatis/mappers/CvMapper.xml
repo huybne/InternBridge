@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.a2m.profileservice.mapper.CvMapper">
+
+    <resultMap id="cvResultMap" type="cv">
+        <id property="cvId" column="cv_id"/>
+        <result property="studentId" column="student_id"/>
+        <result property="title" column="title"/>
+        <result property="cvDetail" column="cv_detail"/>
+        <result property="createdAt" column="created_at" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status"/>
+        <result property="isDeleted" column="is_deleted" javaType="boolean" jdbcType="TINYINT"/>
+    </resultMap>
+
+
+    <select id="selectAllCvByStudentId" resultMap="cvResultMap">
+        SELECT *
+        FROM cvs
+        WHERE student_id = #{studentId}
+          AND title LIKE CONCAT('%', #{search}, '%')
+          AND is_deleted = 0
+    </select>
+
+
+
+    <insert id="createCv" useGeneratedKeys="true" keyProperty="cvId">
+        INSERT INTO cvs (cv_id, student_id, title, cv_detail, created_at, status, is_deleted)
+        VALUES (UUID(), #{studentId}, #{title}, #{cvDetail}, NOW(), 'published', 0)
+    </insert>
+
+    <update id="updateCv" parameterType="cv">
+        UPDATE cvs
+        SET
+        title = #{title},
+        cv_detail = #{cvDetail},
+        is_deleted = COALESCE(#{isDeleted}, 0)   <!-- Giữ giá trị mặc định là 0 nếu không có giá trị truyền vào -->
+        WHERE cv_id = #{cvId}
+    </update>
+
+    <select id="selectCvByCvId" resultMap="cvResultMap" parameterType="String">
+        SELECT *
+        FROM cvs
+        WHERE cv_id = #{cvId} AND is_deleted = 0
+    </select>
+
+    <update id="deleteCvByCvId" parameterType="String">
+        UPDATE cvs
+        SET is_deleted = 1
+        WHERE cv_id = #{cvId}
+    </update>
+
+
+
+
+</mapper>

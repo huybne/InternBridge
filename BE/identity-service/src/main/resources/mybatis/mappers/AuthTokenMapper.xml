@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.internship.identity_service.mapper.AuthTokenMapper">
+
+    <resultMap id="AuthTokenResultMap" type="com.internship.identity_service.model.AuthToken">
+        <id property="tokenId" column="token_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="token" column="token"/>
+        <result property="expiresAt" column="expires_at"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="revoked" column="revoked"/>
+    </resultMap>
+
+    <insert id="save" parameterType="com.internship.identity_service.model.AuthToken">
+        INSERT INTO auth_tokens (
+            token_id, user_id, token, expires_at, created_at, revoked
+        ) VALUES (
+                     #{tokenId}, #{userId}, #{token}, #{expiresAt}, #{createdAt}, #{revoked}
+                 )
+    </insert>
+
+    <update id="revoke" parameterType="String">
+        UPDATE auth_tokens
+        SET revoked = TRUE
+        WHERE token = #{refreshToken}
+    </update>
+
+    <select id="findByToken" resultMap="AuthTokenResultMap" parameterType="String">
+        SELECT * FROM auth_tokens
+        WHERE token = #{token} AND revoked = 0
+    </select>
+
+</mapper>

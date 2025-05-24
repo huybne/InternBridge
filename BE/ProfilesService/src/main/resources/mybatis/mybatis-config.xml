@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- Type Aliases -->
+    <typeAliases>
+        <typeAlias type="com.a2m.profileservice.model.student_profiles" alias="student_profiles"/>
+        <typeAlias type="com.a2m.profileservice.model.cv" alias="cv"/>
+        <typeAlias type="com.a2m.profileservice.model.StudentCard" alias="StudentCard" />
+        <typeAlias type="com.a2m.profileservice.model.RequestStudents" alias="RequestStudents" />
+        <typeAlias type="com.a2m.profileservice.model.RequestBusinesses" alias="RequestBusiness" />
+        <typeAlias type="com.a2m.profileservice.model.StudentFavoriteJob" alias="FarvouriteJob"/>
+    </typeAliases>
+
+</configuration>

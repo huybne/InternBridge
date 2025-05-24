@@ -1,0 +1,98 @@
+server:
+  port: 8088
+
+spring:
+  cloud:
+    gateway:
+      add-to-simple-url-handler-mapping: true
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://18.140.1.2:5174"
+              - "https://fe.internship-a2m.website"
+              - "https://internship-a2m.website"
+              - "https://be.internship-a2m.website"
+              - "http://localhost:5173"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+              - PATCH
+            allowedHeaders:
+              - Origin
+              - Content-Type
+              - Accept
+              - Authorization
+              - X-Requested-With
+            exposedHeaders:
+              - Authorization
+              - Set-Cookie
+            allowCredentials: true
+            maxAge: 3600
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: identity-service
+          uri: lb://identity-service
+          predicates:
+            - Path=/api/v1/auth/**,/api/v1/users/**,/api/v1/roles/**
+
+        - id: profile-service
+          uri: lb://profile-service
+          predicates:
+            - Path=
+              /api/v1/business/**,
+              /api/users/**,
+              /api/v1/request-business/**,
+              /api/requeststudent/**,
+              /api/v1/staff-admin/**,
+              /api/student_profiles/**,
+              /api/cv/**,
+              /api/v1/admin/**,
+              /api/v1/business/images/**,
+              /api/requeststudent/**
+
+
+        - id: recruitment-service
+          uri: lb://recruitment-service
+          predicates:
+            - Path=
+              /api/v1/apply-jobs/**,
+              /api/v1/categories/**,
+              /api/v1/interviews/**,
+              /api/v1/job-categories/**,
+              /api/v1/job-postings/**,
+              /api/v1/farvouritejob/**,
+
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/v1/noti/**
+
+
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+    register-with-eureka: true
+    fetch-registry: true
+
+
+
+logging:
+  level:
+    com.internship.identity_service.controller: DEBUG
+#    org.springframework.web.cors: DEBUG
+#    org.springframework.cloud.gateway: TRACE
+

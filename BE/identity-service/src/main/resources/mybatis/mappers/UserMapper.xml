@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.internship.identity_service.mapper.UserMapper">
+
+    <resultMap id="UserWithRolesResultMap" type="com.internship.identity_service.model.User">
+        <id property="userId" column="user_id"/>
+        <result property="email" column="email"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="status" column="status"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="provider" column="provider" />
+        <result property="createdAt" column="created_at"/>
+        <result property="picture" column="picture" />
+        <collection property="roles" ofType="com.internship.identity_service.model.Role">
+            <id property="roleId" column="role_id"/>
+            <result property="roleName" column="role_name"/>
+            <result property="permissions" column="permissions"/>
+            <result property="createdAt" column="role_created_at"/>
+
+        </collection>
+    </resultMap>
+
+    <select id="findByEmail" parameterType="String" resultMap="UserWithRolesResultMap">
+        SELECT u.*, r.role_id, r.role_name, r.permissions, r.created_at AS role_created_at
+        FROM users u
+                 LEFT JOIN user_roles ur ON u.user_id = ur.user_id
+                 LEFT JOIN roles r ON ur.role_id = r.role_id
+        WHERE u.email = #{email} AND u.is_deleted = FALSE
+    </select>
+
+
+    <select id="findById" parameterType="String" resultMap="UserWithRolesResultMap">
+        SELECT u.*, r.role_id, r.role_name, r.permissions, r.created_at AS role_created_at
+        FROM users u
+                 LEFT JOIN user_roles ur ON u.user_id = ur.user_id
+                 LEFT JOIN roles r ON ur.role_id = r.role_id
+        WHERE u.user_id = #{userId} AND u.is_deleted = FALSE
+    </select>
+
+    <select id="findAll" resultMap="UserWithRolesResultMap">
+        SELECT u.*, r.role_id, r.role_name, r.permissions, r.created_at AS role_created_at
+        FROM users u
+                 LEFT JOIN user_roles ur ON u.user_id = ur.user_id
+                 LEFT JOIN roles r ON ur.role_id = r.role_id
+        WHERE u.is_deleted = FALSE
+    </select>
+
+    <select id="findAllIncludingDeleted" resultMap="UserWithRolesResultMap">
+        SELECT u.*, r.role_id, r.role_name, r.permissions, r.created_at AS role_created_at
+        FROM users u
+                 LEFT JOIN user_roles ur ON u.user_id = ur.user_id
+                 LEFT JOIN roles r ON ur.role_id = r.role_id
+    </select>
+
+    <insert id="insertUser" parameterType="com.internship.identity_service.model.User">
+        INSERT INTO users (
+            user_id, email, username, password, status, is_deleted, provider
+        ) VALUES (
+                     #{userId}, #{email}, #{username}, #{password}, #{status}, #{isDeleted}, #{provider}
+                 )
+    </insert>
+
+
+    <insert id="insertUserRole" parameterType="map">
+        INSERT INTO user_roles(user_id, role_id)
+        VALUES (#{userId}, #{roleId})
+    </insert>
+
+    <update id="updateUser" parameterType="com.internship.identity_service.model.User">
+        UPDATE users
+        <set>
+            <if test="username != null">username = #{username},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="email != null">email = #{email},</if>
+        </set>
+        WHERE user_id = #{userId} AND is_deleted = FALSE
+    </update>
+
+    <update id="softDeleteUser" parameterType="String">
+        UPDATE users
+        SET
+            is_deleted = TRUE,
+            status = CASE
+                         WHEN status IN ('active', 'pending') THEN 'inactive'
+                         ELSE status
+                END
+        WHERE user_id = #{userId}
+    </update>
+
+    <select id="findEmailById" parameterType="String" resultType="String">
+        SELECT email FROM users
+        WHERE user_id = #{userId} AND is_deleted = FALSE
+    </select>
+
+    <select id="existsByEmailAndNotDeleted" parameterType="String" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM users
+        WHERE email = #{email} AND is_deleted = FALSE
+    </select>
+
+    <update id="updatePassword">
+        UPDATE users
+        SET password = #{newPassword}
+        WHERE user_id = #{userId}
+    </update>
+
+
+    <delete id="deleteUserRoles" parameterType="string">
+        DELETE FROM user_roles WHERE user_id = #{userId}
+    </delete>
+    <insert id="insertUserRoles">
+        INSERT INTO user_roles (user_id, role_id)
+        VALUES
+        <foreach collection="roleIds" item="roleId" separator=",">
+            (#{userId}, #{roleId})
+        </foreach>
+    </insert>
+    <select id="existsUserRole" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM user_roles
+        WHERE user_id = #{userId} AND role_id = #{roleId}
+    </select>
+
+    <select id="findAllByRoleName" resultMap="UserWithRolesResultMap">
+        SELECT u.*, r.role_id, r.role_name, r.permissions, r.created_at AS role_created_at
+        FROM users u
+                 JOIN user_roles ur ON u.user_id = ur.user_id
+                 JOIN roles r ON ur.role_id = r.role_id
+        WHERE u.is_deleted = FALSE AND r.role_name = #{roleName}
+        ORDER BY u.username ASC
+            LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countUsersByRoleName" resultType="int">
+        SELECT COUNT(DISTINCT u.user_id)
+        FROM users u
+                 JOIN user_roles ur ON u.user_id = ur.user_id
+                 JOIN roles r ON ur.role_id = r.role_id
+        WHERE u.is_deleted = FALSE AND r.role_name = #{roleName}
+    </select>
+
+
+    <update id="banUser" parameterType="string">
+        UPDATE users
+        SET status = 'banned'
+        WHERE user_id = #{userId} AND is_deleted = FALSE
+    </update>
+
+    <update id="unbanUser" parameterType="string">
+        UPDATE users
+        SET status = 'active'
+        WHERE user_id = #{userId} AND is_deleted = FALSE AND status = 'banned'
+    </update>
+
+    <select id="countUsersByStatus" resultType="map">
+        SELECT status,
+               COUNT(*) AS count
+        FROM users
+        WHERE is_deleted = FALSE
+        GROUP BY status
+    </select>
+
+    <delete id="deleteSpecificUserRole" parameterType="map">
+        DELETE FROM user_roles
+        WHERE user_id = #{userId} AND role_id = #{roleId}
+    </delete>
+    <select id="searchUsersByEmail" resultMap="SearchUserResponseResultMap">
+        SELECT u.user_id AS userId, u.username, u.email, GROUP_CONCAT(r.role_name) as roleNames
+        FROM users u
+                 LEFT JOIN user_roles ur ON u.user_id = ur.user_id
+                 LEFT JOIN roles r ON ur.role_id = r.role_id
+        WHERE u.email LIKE CONCAT('%', #{email}, '%')
+        GROUP BY u.user_id
+    </select>
+
+
+    <resultMap id="SearchUserResponseResultMap" type="com.internship.identity_service.dto.response.SearchUserResponse">
+        <result property="userId" column="userId"/>
+        <result property="username" column="username"/>
+        <result property="email" column="email"/>
+        <result property="roleNames" column="roleNames" typeHandler="com.internship.identity_service.util.CommaSeparatedStringTypeHandler"/>
+    </resultMap>
+
+    <!-- 1. Đăng ký theo từng ngày trong 7 ngày gần nhất -->
+    <select id="countRegistrationsLast7Days" resultType="map">
+    <![CDATA[
+        WITH RECURSIVE dates AS (
+            SELECT CURDATE() - INTERVAL 6 DAY AS date
+        UNION ALL
+        SELECT date + INTERVAL 1 DAY FROM dates WHERE date + INTERVAL 1 DAY <= CURDATE()
+            )
+        SELECT
+            d.date,
+            COUNT(u.user_id) AS total
+        FROM dates d
+                 LEFT JOIN users u ON DATE(u.created_at) = d.date AND u.is_deleted = FALSE
+        GROUP BY d.date
+        ORDER BY d.date
+        ]]>
+</select>
+
+    <!-- 2. Đăng ký theo từng ngày trong tháng hiện tại -->
+    <select id="countRegistrationsThisMonth" resultType="map">
+    <![CDATA[
+        WITH RECURSIVE days AS (
+            SELECT DATE_FORMAT(CURDATE(), '%Y-%m-01') + INTERVAL 0 DAY AS date
+        UNION ALL
+        SELECT date + INTERVAL 1 DAY
+        FROM days
+        WHERE MONTH(date + INTERVAL 1 DAY) = MONTH(CURDATE())
+          AND (date + INTERVAL 1 DAY) <= CURDATE()
+            )
+        SELECT
+            d.date,
+            COUNT(u.user_id) AS total
+        FROM days d
+                 LEFT JOIN users u ON DATE(u.created_at) = d.date AND u.is_deleted = FALSE
+        GROUP BY d.date
+        ORDER BY d.date
+        ]]>
+</select>
+
+    <!-- 3. Đăng ký theo từng tháng trong năm hiện tại -->
+    <select id="countRegistrationsThisYear" resultType="map">
+    <![CDATA[
+        WITH RECURSIVE months AS (
+            SELECT 1 AS month
+        UNION ALL
+        SELECT month + 1 FROM months WHERE month + 1 <= MONTH(CURDATE())
+            )
+        SELECT
+            m.month,
+            COUNT(u.user_id) AS total
+        FROM months m
+                 LEFT JOIN users u ON MONTH(u.created_at) = m.month AND YEAR(u.created_at) = YEAR(CURDATE()) AND u.is_deleted = FALSE
+        GROUP BY m.month
+        ORDER BY m.month
+        ]]>
+</select>
+    <update id="updateAvatar" parameterType="map">
+        UPDATE users
+        SET picture = #{avatarUrl}
+        WHERE user_id = #{userId} AND is_deleted = FALSE
+    </update>
+
+
+
+</mapper>

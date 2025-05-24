@@ -1,0 +1,151 @@
+spring:
+  application:
+    name: identity-service
+
+  mvc:
+    static-path-pattern: /**
+
+  datasource:
+    url: jdbc:mariadb://localhost:3306/identity_service
+    username: root
+    password: fred
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: huybuinee@gmail.com
+    password: qoti srty wnoh zfqk
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${CLIENT_ID}
+            client-secret: ${CLIENT_SECRET}
+            redirect-uri: ${REDIRECT_URI}
+
+            client-name: "identity-service"
+            scope:
+              - openid
+              - profile
+              - email
+
+app:
+  base-url: https://be.internship-a2m.website/
+  mail-from: huybuinee@gmail.com
+
+  frontend-url: https://fe.internship-a2m.website/authenticate
+#  frontend-url: http://localhost:5173
+allow:
+  host: https://fe.internship-a2m.website
+
+# Cấu hình giới hạn login
+login:
+  maxAttempts: 5
+  attempts:
+    coolTime: 900  # giây
+
+# Cấu hình reset password
+reset:
+  password:
+    url: https://be.internship-a2m.website/resetPassword?token=
+
+
+
+
+mybatis:
+  mapper-locations: classpath:mybatis/mappers/*.xml
+  config-location: classpath:mybatis/mybatis-config.xml
+  type-aliases-package: com.internship.identity_service.model
+logging:
+  level:
+    org.springframework.web: DEBUG
+    com.internship.identity_service.controller: DEBUG
+    com.internship.identity_service.security: DEBUG
+#    org.springframework.web: DEBUG
+#    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+#    org.springframework.mail: DEBUG
+#    com.internship.identity_service.mapper: DEBUG
+#    org.mybatis: DEBUG
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}
+
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+#      defaultZone: http://discovery-server:8761/eureka
+
+      registryFetchIntervalSeconds: 80
+      easeRenewalIntervalInSeconds: 80
+
+jwt:
+  issuer: identity-service
+  access:
+    token:
+      lifetime: 3600
+  refresh:
+    token:
+      lifetime: 2592000
+  secret:
+    privateKey:
+      -----BEGIN PRIVATE KEY-----
+      MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC+8v1WivImmA3m
+      gjQlJjtfOV3/x7Jfy4x5Pg+B8+RsstFKVKaX9/i7287VpTWYwpS8pcXnKwVo33Yw
+      +8F0+hZdUMWJLkZo2DoMndhz7y+DGgXWpMw6PmkFjLgxJWcMn7YSgCKQ0VLOGDuk
+      LwFZ9rVGdR0FFL68JgwjuzpOF3MM+sEMmuYZBSbfeI4vDhYt/SHS21GGGsXTqhZs
+      hOiDcCfS9vhl4P60qOOSK3uRrjRohzn5bgVsl/PQFrs0+piGw8jImHnIk/0N0eTA
+      rabe4nX6VslRxnlLP16snxxqkTZMHhev8A+D7ez8uyVXK0CNd50VT7bKA2v7ksEk
+      5zLb1LtjAgMBAAECggEAMT9NPHFIg9CqoR1KopwqKuSKTEouRIukVq69ZChJbQlv
+      dgrADqi7Q4Qs46gg2x2wK7lbgcP0OLiNbJO5sNhBRV7sG3XOXgMKca+SIFB7ggYH
+      pHTLYWgwQOiqpq49ViGo3Tuj7pK2FwZj93PSFuhMl3fj/Kf9i1wKvHpwzqw4lYty
+      iam4nvUt/pOBMah5k1EJLcLH3mTG8iTSNO2iCbPqp2cPdVtx2kgyLUTcqxjPUrlU
+      Ab/rixPpOq3pcL/+doMe5rtLDmPnZodvcBpJqrIfGFAt6791A7pF4WdCj+UXfmhk
+      dnk25ntqcPzoH+3Xr6/2sJjmVaj9aB149eFEMQmFhQKBgQDf34ihd8wtkm7oB6lC
+      daVr77BFcEGeVaqESg/zhOyTNhQN6lDevz2o50FDMvg6aGaWZb98/4iaDRM3DZVu
+      kIgl0doAFdYB/VncghxxOb0/KZpFI/PrV9dwgoikXnKWu3BERWBA+AYR+bmT/sFj
+      +Xz1aCHFkWwd2p8Mcf1wGYrZjQKBgQDaWevghYoMpzrzpPL1TR31xmRXZQcX9DLk
+      7qsp9/6UsPlRivHlB+soaPhSYDAY80BZvY+KV4vUEcTo4qo/bFZ37fq0luW55qlk
+      eyd1UVzVDvsj5DGNRiZscFyUL4kVgyAWPbZyBL2jWGCJfqwJ+g8M7puDyPRvXUWB
+      rtASllcUrwKBgQCGN6LXg1YTAFajn2w3nwbE9leM2edNQPjRBQIZMlkPTP2q9g7z
+      7F3QNIzo99bgVZUjl+68xwqjqTEa8XbkaZxmaDC1mmHKoZTNYeghbcdq5ctKpmpn
+      byuHlYrMWJ+EhO2i0KELcmdZQYmkE7jn8jybeIm+xBe4skhmkrSqD3YyRQKBgBHm
+      v2Tn7dp9t2KUSmr8CJHG0yErIjq/hZCpVJUbRN7x527dAlnxnUDx4jH2utrAzqzM
+      0sDXzpnzXv5s3uJWQnyQoTY/DNSB6a9YPXLr2b2J/eMCaWGYt7u6NozbnNSLrIzG
+      QHf2lYmXzEpZfUdQHf3EbjGOvyOGNRWdvGdZtgf3AoGAQxxo/42TYvVz/DH9AzQf
+      479KoZWuHCv+fXcyIj1bW4k6B25S3NlfMuzXhI10fV8PBrj3sLVRG8EWxvD4J1y/
+      mDMERjPAxkUgkYT7gweo3yOQFUsZKhiQ/Z9kuXoBNKtOohP6Ivr+TKrHc9JKEss+
+      uGqQAIoovkGcadly6EqUIXs=
+      -----END PRIVATE KEY-----
+    publicKey:
+      -----BEGIN PUBLIC KEY-----
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvvL9VoryJpgN5oI0JSY7
+      Xzld/8eyX8uMeT4PgfPkbLLRSlSml/f4u9vO1aU1mMKUvKXF5ysFaN92MPvBdPoW
+      XVDFiS5GaNg6DJ3Yc+8vgxoF1qTMOj5pBYy4MSVnDJ+2EoAikNFSzhg7pC8BWfa1
+      RnUdBRS+vCYMI7s6ThdzDPrBDJrmGQUm33iOLw4WLf0h0ttRhhrF06oWbITog3An
+      0vb4ZeD+tKjjkit7ka40aIc5+W4FbJfz0Ba7NPqYhsPIyJh5yJP9DdHkwK2m3uJ1
+      +lbJUcZ5Sz9erJ8capE2TB4Xr/APg+3s/LslVytAjXedFU+2ygNr+5LBJOcy29S7
+      YwIDAQAB
+      -----END PUBLIC KEY-----

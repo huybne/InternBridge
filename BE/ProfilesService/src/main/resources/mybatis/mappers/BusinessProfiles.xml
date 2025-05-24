@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.a2m.profileservice.mapper.BusinessProfilesMapper">
+
+    <!-- Map kết quả từ cơ sở dữ liệu thành Business Profile -->
+    <resultMap id="businessProfileResultMap" type="com.a2m.profileservice.model.BusinessProfiles">
+        <id property="profileId" column="profile_id" />
+        <result property="companyName" column="company_Name" />
+        <result property="industry" column="industry" />
+        <result property="companyInfo" column="company_info"/>
+        <result property="websiteUrl" column="website_url"/>
+        <result property="taxCode" column="tax_code"/>
+        <result property="email" column="email"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="address" column="address"/>
+        <result property="isApproved" column="is_approved" jdbcType="BOOLEAN"/>
+        <result property="status" column="status"/>
+        <result property="isDeleted" column="is_deleted" jdbcType="BOOLEAN"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+        <result property="Image_Avatar_url" column="Image_Avatar_url"/>
+    </resultMap>
+
+    <!-- Business Verifycation -->
+    <insert id="businessVerifycation">
+        INSERT INTO profile_service.business_profiles (
+            profile_id, company_name, industry, company_info, website_url, tax_code,
+            email, phone_number, address,
+            is_approved, status, is_deleted, created_at, updated_at
+        )
+        VALUES (
+                   #{profileId},
+                   #{businessProfiles.companyName}, #{businessProfiles.industry},
+                   #{businessProfiles.companyInfo}, #{businessProfiles.websiteUrl},
+                   #{businessProfiles.taxCode}, #{businessProfiles.email},
+                   #{businessProfiles.phoneNumber}, #{businessProfiles.address},
+                   #{businessProfiles.isApproved}, 'active',
+                   #{businessProfiles.isDeleted}, #{businessProfiles.createdAt},
+                   #{businessProfiles.updatedAt}
+               )
+    </insert>
+
+    <!-- Lấy taxCode -->
+    <select id="findByTaxCode" parameterType="String" resultMap="businessProfileResultMap">
+        SELECT * FROM profile_service.business_profiles
+        WHERE tax_code = #{taxCode} AND is_deleted = false
+    </select>
+
+    <select id="getCompanyNameById" parameterType="String" resultType="string">
+        SELECT company_name
+        FROM profile_service.business_profiles
+        WHERE profile_id = #{profileId}
+          AND is_deleted = false
+    </select>
+
+
+    <!-- Lấy thông tin business profile theo id -->
+    <select id="getBusinessProfileById" parameterType="String" resultMap="businessProfileResultMap">
+        SELECT * FROM profile_service.business_profiles
+        WHERE profile_id = #{profileId} AND is_deleted = false
+    </select>
+
+
+    <!-- Cập nhật thông tin business profile -->
+    <update id="updateBusinessProfile" parameterType="com.a2m.profileservice.model.BusinessProfiles">
+        UPDATE profile_service.business_profiles
+        SET company_name = #{companyName},
+            industry = #{industry},
+            company_info = #{companyInfo},
+            website_url = #{websiteUrl},
+            email = #{email},
+            phone_number = #{phoneNumber},
+            address = #{address},
+            is_approved = false,
+            status = null
+        WHERE profile_id = #{profileId}
+        AND is_deleted = false
+    </update>
+
+    <select id="checkProfileExist" resultType="boolean" parameterType="string">
+        SELECT COUNT(1) > 0
+        FROM business_profiles
+        WHERE profile_id = #{profileId}
+    </select>
+
+    <update id="updateBusinessProfileAfterFix" parameterType="com.a2m.profileservice.model.BusinessProfiles">
+        UPDATE profile_service.business_profiles
+        SET company_name = #{companyName},
+            industry = #{industry},
+            company_info = #{companyInfo},
+            website_url = #{websiteUrl},
+            email = #{email},
+            phone_number = #{phoneNumber},
+            address = #{address},
+            updated_at = NOW()
+        WHERE profile_id = #{profileId}
+          AND is_deleted = false
+    </update>
+
+
+    <select id="getAllBusinessProfiles" resultMap="businessProfileResultMap">
+        SELECT
+        profile_id,
+        company_name,
+        industry,
+        company_info,
+        website_url,
+        tax_code,
+        email,
+        phone_number,
+        address,
+        is_approved,
+        status,
+        is_deleted,
+        created_at,
+        updated_at,
+        Image_Avatar_url
+        FROM business_profiles
+        <where>
+            <if test="isApproved != -1">
+                AND is_approved = #{isApproved}
+            </if>
+            <if test="search != null and search != ''">
+                AND (
+                company_name LIKE CONCAT('%', #{search}, '%')
+                OR industry LIKE CONCAT('%', #{search}, '%')
+                OR email LIKE CONCAT('%', #{search}, '%')
+                OR phone_number LIKE CONCAT('%', #{search}, '%')
+                )
+            </if>
+        </where>
+        ORDER BY profile_id ASC
+        LIMIT #{offset}, #{limit}  <!-- Sử dụng LIMIT với offset và limit -->
+    </select>
+
+    <select id="CountAllBusinessProfiles" resultType="int">
+        SELECT COUNT(*)
+        FROM business_profiles
+        <where>
+            <!-- Điều kiện cho isApproved -->
+            <if test="isApproved != -1">
+                AND is_approved = #{isApproved}
+            </if>
+
+            <!-- Điều kiện cho search -->
+            <if test="search != null and search != ''">
+                AND (
+                company_name LIKE CONCAT('%', #{search}, '%')
+                OR industry LIKE CONCAT('%', #{search}, '%')
+                OR email LIKE CONCAT('%', #{search}, '%')
+                OR phone_number LIKE CONCAT('%', #{search}, '%')
+                )
+            </if>
+        </where>
+    </select>
+
+
+
+
+
+    <select id="getStatusBusinessProfileById" resultType="String">
+        SELECT status
+        FROM business_profiles
+        WHERE profile_id = #{profileId}
+    </select>
+
+
+    <update id="updateStatusBusinessProfileById">
+        UPDATE business_profiles
+        SET status = #{status}
+        WHERE profile_id = #{profileId}
+    </update>
+
+    <update id="addImagevatrBusinessProfile" parameterType="map">
+        UPDATE business_profiles
+        SET Image_Avatar_url = #{images}
+        WHERE profile_id = #{profileId}
+    </update>
+
+
+</mapper>

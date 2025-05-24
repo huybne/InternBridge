@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.a2m.profileservice.mapper.StudentProfilesMapper">
+
+    <!-- Map kết quả từ cơ sở dữ liệu thành User -->
+    <resultMap id="studentProfileResultMap" type="com.a2m.profileservice.model.student_profiles">
+        <id property="profileId" column="profile_id" />
+        <result property="fullName" column="full_name" />
+        <result property="major" column="major" />
+        <result property="dateOfBirth" column="date_of_birth" jdbcType="DATE"/>
+        <result property="address" column="address" />
+        <result property="university" column="university" />
+        <result property="avatarUrl" column="avatar_url" />
+        <result property="academicYearStart" column="academic_year_start" jdbcType="DATE"/>
+        <result property="academicYearEnd" column="academic_year_end" jdbcType="DATE"/>
+        <result property="phoneNumber" column="phone_number" />
+        <result property="isApproved" column="is_approved" jdbcType="BOOLEAN"/>
+        <result property="status" column="status" />
+        <result property="isDeleted" column="is_deleted" jdbcType="BOOLEAN"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- Lấy toàn bộ profile -->
+    <select id="getAll" resultMap="studentProfileResultMap">
+        SELECT * FROM profile_service.student_profiles
+    </select>
+
+    <!-- Lấy theo ID -->
+    <select id="getById" resultMap="studentProfileResultMap">
+        SELECT * FROM profile_service.student_profiles
+        WHERE profile_id = #{id}
+    </select>
+
+    <!-- Kiểm tra tồn tại -->
+    <select id="checkExits" resultType="int">
+        SELECT COUNT(1)
+        FROM profile_service.student_profiles
+        WHERE profile_id = #{id}
+    </select>
+
+    <!-- Thêm mới -->
+    <insert id="createStudentProfile" parameterType="student_profiles">
+        INSERT INTO profile_service.student_profiles (
+            profile_id, full_name, major, date_of_birth, address, university,
+            academic_year_start, academic_year_end, phone_number,
+            is_approved, status, is_deleted, created_at, updated_at
+        )
+        VALUES (
+                   #{profileId}, #{fullName}, #{major}, #{dateOfBirth}, #{address},
+                   #{university}, #{academicYearStart}, #{academicYearEnd},
+                   #{phoneNumber}, 0, 1,
+                   0, NOW(), NOW()
+               )
+    </insert>
+
+    <!-- Cập nhật -->
+    <update id="updateStudentProfile" parameterType="student_profiles">
+        UPDATE student_profiles
+        SET
+            full_name = #{fullName},
+            major = #{major},
+            date_of_birth = #{dateOfBirth},
+            address = #{address},
+            university = #{university},
+            avatar_url = #{avatarUrl},
+            academic_year_start = #{academicYearStart},
+            academic_year_end = #{academicYearEnd},
+            phone_number = #{phoneNumber},
+            updated_at = NOW()
+        WHERE profile_id = #{profileId}
+    </update>
+
+    <!-- Cập nhật avatar -->
+    <update id="UpdateAvatar">
+        UPDATE student_profiles
+        SET avatar_url = #{avatar},
+            updated_at = NOW()
+        WHERE profile_id = #{id}
+    </update>
+
+
+    <select id="getStudentName" parameterType="String" resultType="string">
+        SELECT full_name
+        FROM profile_service.student_profiles
+        WHERE profile_id = #{profileId}
+          AND is_deleted = false
+
+    </select>
+
+
+    <select id="checkIfExists" resultType="boolean" parameterType="string">
+        SELECT COUNT(1) > 0
+        FROM student_profiles
+        WHERE profile_id = #{id}
+    </select>
+
+    <select id="GetAllStudentProfiles" resultMap="studentProfileResultMap" resultType="student_profiles">
+        SELECT
+        profile_id,
+        full_name,
+        major,
+        date_of_birth,
+        address,
+        university,
+        avatar_url,
+        academic_year_start,
+        academic_year_end,
+        phone_number,
+        is_approved,
+        status,
+        is_deleted,
+        created_at,
+        updated_at
+        FROM student_profiles
+        <where>
+            <if test="search != null and search != ''">
+                AND (full_name LIKE CONCAT('%', #{search}, '%')
+                OR major LIKE CONCAT('%', #{search}, '%')
+                OR university LIKE CONCAT('%', #{search}, '%'))
+            </if>
+
+            <!-- Điều kiện cho isApproved -->
+            <if test="isApproved != -1">
+                AND is_approved = #{isApproved}
+            </if>
+        </where>
+        ORDER BY created_at ASC
+        LIMIT #{offset}, #{limit}  <!-- Sử dụng LIMIT với offset và limit -->
+    </select>
+
+    <select id="CountAllStudentProfiles" resultType="int">
+        SELECT COUNT(*)
+        FROM student_profiles
+        <where>
+            <if test="search != null and search != ''">
+                AND (full_name LIKE CONCAT('%', #{search}, '%')
+                OR major LIKE CONCAT('%', #{search}, '%')
+                OR university LIKE CONCAT('%', #{search}, '%'))
+            </if>
+
+            <!-- Điều kiện cho isApproved -->
+            <if test="isApproved != -1">
+                AND is_approved = #{isApproved}
+            </if>
+        </where>
+    </select>
+
+
+
+    <select id="getStatusStudent" resultType="String">
+        SELECT status
+        FROM student_profiles
+        WHERE profile_id = #{id}
+    </select>
+
+
+    <update id="updateStatusStudent">
+        UPDATE student_profiles
+        SET status = #{status}
+        WHERE profile_id = #{id}
+    </update>
+
+
+    <update id="approveStudentProfile" parameterType="map">
+        UPDATE student_profiles
+        SET is_approved = #{isApproved},
+            updated_at = NOW()
+        WHERE profile_id = #{profileId}
+    </update>
+
+    <select id="checkApproveStatus" parameterType="String" resultType="Integer">
+        select COUNT(*) > 0 from student_profiles sp  WHERE sp.profile_id = #{id} and sp.is_approved  = 1
+    </select>
+
+
+
+
+</mapper>
+

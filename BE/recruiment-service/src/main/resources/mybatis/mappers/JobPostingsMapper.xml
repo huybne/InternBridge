@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.internship.recruitment_service.mapper.JobPostingsMapper">
+
+    <!-- Mapping từ bảng job_postings sang model JobPostings -->
+    <resultMap id="JobPostingsResultMap" type="com.internship.recruitment_service.model.JobPostings">
+        <id property="jobId" column="job_id"/>
+        <result property="businessId" column="business_id"/>
+        <result property="companyName" column="company_name"/>
+        <result property="avatarUrl" column="avatar_url"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="location" column="location"/>
+        <result property="numberEmployees" column="number_employees"/>
+        <result property="status" column="status"/>
+        <result property="isUrgentRecruitment" column="isUrgentRecruitment"/>
+        <result property="expirationDate" column="expirationDate"/>
+        <result property="reasonReject" column="reasonReject"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="salary" column="salary"/>
+    </resultMap>
+
+    <resultMap id="JobPostingsWithCategoriesResultMap"
+               type="com.internship.recruitment_service.dto.JobPostingsResponse.JobPostingsResponseDTO">
+        <id property="jobId" column="job_id"/>
+        <result property="businessId" column="business_id"/>
+        <result property="companyName" column="company_name"/>
+        <result property="avatarUrl" column="avatar_url"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="location" column="location"/>
+        <result property="numberEmployees" column="number_employees"/>
+        <result property="status" column="status"/>
+        <result property="isUrgentRecruitment" column="isUrgentRecruitment"/>
+        <result property="expirationDate" column="expirationDate"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="salary" column="salary"/>
+        <result property="reasonRejection" column="reasonReject"/>
+
+        <!-- Danh sách tên danh mục -->
+        <collection property="categoryNames" ofType="string"
+                    column="job_id"
+                    select="getCategoryNamesByJobId"/>
+    </resultMap>
+
+
+    <!-- Tạo mới job posting (dùng cho cả draft và gửi duyệt, phụ thuộc vào giá trị status) -->
+    <insert id="createJobPosting" parameterType="com.internship.recruitment_service.model.JobPostings">
+        INSERT INTO job_postings (job_id, business_id, company_name, avatar_url, title, description, location,
+                                  number_employees,
+                                  status, isUrgentRecruitment, expirationDate,
+                                  is_deleted, updated_at, salary)
+        VALUES (#{jobId}, #{businessId}, #{companyName}, #{avatarUrl}, #{title}, #{description}, #{location},
+                #{numberEmployees}, #{status}, #{isUrgentRecruitment}, #{expirationDate},
+                #{isDeleted}, #{updatedAt}, #{salary})
+    </insert>
+
+    <!-- Cập nhật toàn bộ nội dung bài đăng -->
+    <update id="updateJobPosting"
+            parameterType="com.internship.recruitment_service.dto.JobPostingsResponse.JobPostingsRequestDTO">
+        UPDATE job_postings
+        SET title               = #{title},
+            description         = #{description},
+            location            = #{location},
+            number_employees    = #{numberEmployees},
+            status              = 0,
+            isUrgentRecruitment = #{isUrgentRecruitment},
+            expirationDate      = #{expirationDate},
+            is_deleted          = 0,
+            updated_at          = NOW(),
+            salary              = #{salary}
+        WHERE job_id = #{jobId}
+          AND status IN (-1, 0, 2)
+    </update>
+
+    <!-- Cập nhật trạng thái của job posting -->
+    <update id="updateJobPostingStatus" parameterType="com.internship.recruitment_service.model.JobPostings">
+        UPDATE job_postings
+        SET status       = #{status},
+            reasonReject = #{reasonReject},
+            updated_at   = NOW()
+        WHERE job_id = #{jobId}
+    </update>
+
+    <!-- Gửi duyệt job posting trong trạng thái draft -->
+    <update id="sendJobPostingForApproval" parameterType="java.lang.String">
+        UPDATE job_postings
+        SET status     = 0,
+            updated_at = NOW()
+        WHERE job_id = #{jobId}
+          AND status = -1
+          AND is_deleted = 0
+    </update>
+
+    <!-- Xóa mềm job posting -->
+    <update id="softDeleteJob" parameterType="java.lang.String">
+        UPDATE job_postings
+        SET is_deleted = 1,
+            updated_at = NOW()
+        WHERE job_id = #{jobId}
+    </update>
+
+    <!-- Lấy tất cả job theo businessId -->
+    <select id="getJobsByBusinessId" resultMap="JobPostingsWithCategoriesResultMap" parameterType="map">
+        SELECT job_id,
+               business_id,
+               company_name,
+               avatar_url,
+               title,
+               description,
+               location,
+               number_employees,
+               status,
+               expirationDate,
+               updated_at,
+               salary,
+               is_deleted,
+               isUrgentRecruitment
+        FROM job_postings
+        WHERE business_id = #{businessId}
+          AND is_deleted = 0
+        ORDER BY expirationDate DESC
+            LIMIT #{limit}
+        OFFSET #{offset}
+    </select>
+
+    <!-- Lấy tất cả job theo businessId -->
+    <select id="getJobsPublicByBusinessId" resultMap="JobPostingsWithCategoriesResultMap" parameterType="map">
+        SELECT job_id,
+               business_id,
+               company_name,
+               avatar_url,
+               title,
+               description,
+               location,
+               number_employees,
+               status,
+               expirationDate,
+               updated_at,
+               salary,
+               is_deleted,
+               isUrgentRecruitment
+        FROM job_postings
+        WHERE business_id = #{businessId}
+          AND is_deleted = 0
+          AND status = 1
+        ORDER BY expirationDate DESC
+            LIMIT #{limit}
+        OFFSET #{offset}
+    </select>
+
+    <!-- Lấy các job ở trạng thái draft của 1 business -->
+    <select id="getDraftJobsByBusinessId" resultMap="JobPostingsWithCategoriesResultMap"
+            parameterType="java.lang.String">
+        SELECT *
+        FROM job_postings
+        WHERE business_id = #{businessId}
+          AND status = -1
+          AND is_deleted = 0
+    </select>
+
+    <!-- Lấy toàn bộ job postings -->
+    <!-- Sử dụng cho STAFF_ADMIN -->
+    <select id="getAllJobPostings" resultMap="JobPostingsWithCategoriesResultMap">
+        SELECT *
+        FROM job_postings
+        WHERE is_deleted = 0
+    </select>
+
+    <!-- Sử dụng cho USER -->
+    <select id="getPublicJobPostings" resultMap="JobPostingsWithCategoriesResultMap">
+        SELECT *
+        FROM job_postings
+        WHERE is_deleted = 0
+          AND status = 1
+        ORDER BY expirationDate DESC
+            LIMIT #{limit}
+        OFFSET #{offset}
+    </select>
+
+    <!-- Lấy chi tiết job theo jobId -->
+    <select id="getJobPostingEntityById" resultMap="JobPostingsResultMap" parameterType="java.lang.String">
+        SELECT *
+        FROM job_postings
+        WHERE job_id = #{jobId}
+    </select>
+
+    <!-- Sử dụng cho STAFF_ADMIN -->
+    <select id="getDetailJobById" resultMap="JobPostingsWithCategoriesResultMap" parameterType="java.lang.String">
+        SELECT *
+        FROM job_postings
+        WHERE job_id = #{jobId}
+    </select>
+
+    <!-- Sử dụng cho USER -->
+    <select id="getPublicJobDetailById" resultMap="JobPostingsWithCategoriesResultMap" parameterType="java.lang.String">
+        SELECT *
+        FROM job_postings
+        WHERE job_id = #{jobId}
+          AND is_deleted = 0
+          AND status = 1
+    </select>
+
+
+    <!-- Kiểm tra jobId có tồn tại không -->
+    <select id="existsByJobId" resultType="boolean" parameterType="java.lang.String">
+        SELECT CASE WHEN COUNT(1) > 0 THEN TRUE ELSE FALSE END
+        FROM job_postings
+        WHERE job_id = #{jobId}
+          AND is_deleted = 0
+    </select>
+
+    <!-- Lấy tên category names theo jobId -->
+    <select id="getCategoryNamesByJobId" resultType="string" parameterType="java.lang.String">
+        SELECT c.name
+        FROM job_categories jc
+                 JOIN categories c ON jc.category_id = c.category_id
+        WHERE jc.job_id = #{jobId}
+          AND jc.is_deleted = 0
+    </select>
+    <!-- Đếm số job postings theo status -->
+    <select id="countJobPostingsByStatus" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM job_postings
+        WHERE status = #{status}
+          AND is_deleted = 0
+    </select>
+
+
+    <select id="getJobPostingsByBusinessidPublic" resultMap="JobPostingsResultMap">
+        SELECT
+        job_id,
+        business_id,
+        title,
+        description,
+        location,
+        number_employees,
+        company_name,
+        avatar_url,
+        status,
+        isUrgentRecruitment,
+        expirationDate,
+        reasonReject,
+        is_deleted,
+        updated_at,
+        salary
+        FROM job_postings
+        WHERE business_id = #{businessId}
+        AND is_deleted = 0 AND status = 1 <!-- Giả sử là không muốn lấy các bản ghi đã xóa -->
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+
+    <select id="CountJobPostingsByBusinessidPublic" resultType="int">
+        SELECT COUNT(*)
+        FROM job_postings
+        WHERE business_id = #{businessId}
+          AND is_deleted = 0
+          AND status = 2
+    </select>
+
+    <!-- Chỉnh sửa hide cho job postings(chỉ public job mới được sửa)-->
+    <update id="updateJobPostingHide" parameterType="com.internship.recruitment_service.model.JobPostings">
+        UPDATE job_postings
+        SET status     = 3,
+            updated_at = NOW()
+        WHERE job_id = #{jobId}
+          AND is_deleted = 0
+          AND status = 1
+    </update>
+
+    <!-- Chỉnh sửa unhide cho job postings(chỉ public job mới được sửa)-->
+    <update id="updateJobPostingUnHide" parameterType="com.internship.recruitment_service.model.JobPostings">
+        UPDATE job_postings
+        SET status     = 1,
+            updated_at = NOW()
+        WHERE job_id = #{jobId}
+          AND is_deleted = 0
+          AND status = 3
+    </update>
+
+    <select id="countJobsByBusinessId" resultType="int">
+        SELECT COUNT(*)
+        FROM job_postings
+        WHERE business_id = #{businessId}
+          AND is_deleted = 0
+    </select>
+
+    <select id="getAllJobByStatus" parameterType="map" resultMap="JobPostingsWithCategoriesResultMap">
+        SELECT
+        job_id,
+        business_id,
+        company_name,
+        avatar_url,
+        title,
+        description,
+        location,
+        number_employees,
+        status,
+        expirationDate,
+        updated_at,
+        salary,
+        is_deleted,
+        isUrgentRecruitment
+        FROM job_postings
+        WHERE is_deleted = 0
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND company_name LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        ORDER BY expirationDate DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+
+    <select id="countAllJobByStatus" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM job_postings
+        WHERE is_deleted = 0
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+    </select>
+
+
+    <select id="getJobPostingFarvourite" resultMap="JobPostingsResultMap">
+        SELECT
+        job_id,
+        business_id,
+        title,
+        description,
+        location,
+        number_employees,
+        company_name,
+        avatar_url,
+        status,
+        isUrgentRecruitment,
+        expirationDate,
+        reasonReject,
+        is_deleted,
+        updated_at,
+        salary
+        FROM job_postings
+        WHERE job_id in (select job_id from student_favorite_jobs where student_id = #{userId} and is_deleted=0)
+        AND is_deleted = 0 AND status = 1 <!-- Giả sử là không muốn lấy các bản ghi đã xóa -->
+
+    </select>
+
+
+    <select id="searchPublicJobPostings" resultMap="JobPostingsWithCategoriesResultMap">
+        SELECT DISTINCT jp.*
+        FROM job_postings jp
+        LEFT JOIN job_categories jc ON jp.job_id = jc.job_id
+        WHERE jp.is_deleted = 0
+        AND
+            jp.status = 1
+        <if test="searchkeyword != null and searchkeyword.trim() != ''">
+            AND (jp.title LIKE CONCAT('%', #{searchkeyword}, '%') OR jp.description LIKE CONCAT('%', #{searchkeyword},
+            '%'))
+        </if>
+        <if test="location != null and location.trim() != ''">
+            AND jp.location LIKE CONCAT('%', #{location}, '%')
+        </if>
+        <if test="company_name != null and company_name.trim() != ''">
+            AND jp.company_name LIKE CONCAT('%', #{company_name}, '%')
+        </if>
+        <if test="isurgen != -1 ">
+            AND jp.isUrgentRecruitment = #{isurgen}
+        </if>
+        <if test="categoryid != null and categoryid.length > 0">
+            AND jc.category_id IN
+            <foreach item="id" collection="categoryid" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        AND jp.is_deleted = 0
+        <choose>
+            <when test="sortByexpirationDate">
+                ORDER BY jp.expirationDate DESC
+            </when>
+            <otherwise>
+                ORDER BY jp.updated_at DESC
+            </otherwise>
+        </choose>
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+
+    <select id="countJobPostings" resultType="int">
+        SELECT COUNT(DISTINCT jp.job_id)
+        FROM job_postings jp
+        LEFT JOIN job_categories jc ON jp.job_id = jc.job_id
+        WHERE jp.is_deleted = 0
+          AND jp.status=1
+        <if test="searchkeyword != null and searchkeyword.trim() != ''">
+            AND (jp.title LIKE CONCAT('%', #{searchkeyword}, '%') OR jp.description LIKE CONCAT('%', #{searchkeyword},
+            '%'))
+        </if>
+        <if test="location != null and location.trim() != ''">
+            AND jp.location LIKE CONCAT('%', #{location}, '%')
+        </if>
+        <if test="company_name != null and company_name.trim() != ''">
+            AND jp.company_name  LIKE CONCAT('%', #{company_name}, '%')
+        </if>
+        <if test="isurgen != -1 ">
+            AND jp.isUrgentRecruitment = #{isurgen}
+        </if>
+        <if test="categoryid != null and categoryid.length > 0">
+            AND jc.category_id IN
+            <foreach item="id" collection="categoryid" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        AND jp.is_deleted = 0
+    </select>
+
+    <!-- Random job postings -->
+    <select id="getRandomJobPostings" resultMap="JobPostingsWithCategoriesResultMap">
+        SELECT *
+        FROM job_postings
+        WHERE is_deleted = 0
+          AND status = 1
+        ORDER BY RAND()
+        LIMIT 4
+    </select>
+
+    <update id="updateBusinessInfo">
+        UPDATE job_postings
+        SET
+            company_name = COALESCE(#{companyName}, company_name),
+            avatar_url = COALESCE(#{avatarUrl}, avatar_url),
+            updated_at = NOW()
+        WHERE business_id = #{business_id}
+    </update>
+
+
+
+
+</mapper>

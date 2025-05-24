@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.a2m.profileservice.mapper.RequestStatsMapper">
+
+    <select id="countTotalPendingRequests" resultType="int">
+        SELECT
+            (SELECT COUNT(*) FROM request_students WHERE status = 'pending' AND is_deleted = FALSE)
+                +
+            (SELECT COUNT(*) FROM request_businesses WHERE status = 'pending' AND is_deleted = FALSE)
+                AS total_pending_requests
+    </select>
+
+    <select id="countPendingStudentRequests" resultType="int">
+        SELECT COUNT(*) FROM request_students WHERE status = 'pending' AND is_deleted = FALSE
+    </select>
+
+    <select id="countPendingBusinessRequests" resultType="int">
+        SELECT COUNT(*) FROM request_businesses WHERE status = 'pending' AND is_deleted = FALSE
+    </select>
+
+</mapper>

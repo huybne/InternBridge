@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.a2m.profileservice.mapper.RequestBusinessesMapper">
+
+    <!-- Map kết quả từ cơ sở dữ liệu thành Request Business -->
+    <resultMap id="RequestBusinessResultMap" type="com.a2m.profileservice.model.RequestBusinesses">
+        <id property="requestId" column="request_id" />
+        <result property="businessId" column="business_id" />
+        <result property="reason" column="reason" />
+        <result property="sendTime" column="send_time" jdbcType="TIMESTAMP" />
+        <result property="status" column="status" />
+        <result property="isDeleted" column="is_deleted" jdbcType="BOOLEAN" />
+    </resultMap>
+
+    <!-- Thêm yêu cầu xác thực doanh nghiệp -->
+    <insert id="insertRequestBusiness" parameterType="com.a2m.profileservice.model.RequestBusinesses">
+        INSERT INTO profile_service.request_businesses (request_id, business_id, reason, send_time, status, is_deleted)
+        VALUES (#{requestId}, #{businessId}, null, NOW(), "pending", false)
+    </insert>
+
+    <!-- Lấy toàn bộ yêu cầu chưa bị xoá -->
+    <select id="getAllRequestBusiness" resultMap="RequestBusinessResultMap">
+        SELECT * FROM request_businesses
+        WHERE is_deleted = 0
+        ORDER BY send_time DESC
+    </select>
+
+    <!-- Lấy yêu cầu theo status -->
+    <select id="getAllRequestBusinessByStatus" parameterType="string" resultMap="RequestBusinessResultMap">
+        SELECT * FROM request_businesses
+        WHERE is_deleted = 0 and status = #{status}
+        ORDER BY send_time DESC
+    </select>
+
+    <!-- Lấy theo ID -->
+    <select id="getRequestBusinessById" parameterType="String" resultMap="RequestBusinessResultMap">
+        SELECT * FROM profile_service.request_businesses
+        WHERE request_id = #{requestId} AND is_deleted = false
+    </select>
+
+
+
+    <!-- Lấy theo businessId mới nhất -->
+    <select id="getRequestBusinessByBusinessId" resultMap="RequestBusinessResultMap" resultType="RequestBusinesses">
+        SELECT *
+        FROM request_businesses
+        WHERE business_id = #{businessId}
+          AND is_deleted = 0
+        ORDER BY send_time DESC LIMIT 1
+    </select>
+
+    <!-- Update trạng thái -->
+    <update id="updateRequestBusinessStatus">
+        UPDATE request_businesses
+        SET status = #{status}
+        WHERE request_id = #{requestId}
+          AND is_deleted = 0
+    </update>
+
+    <!-- Update lý do từ chối -->
+    <update id="updateRejectReason">
+        UPDATE request_businesses
+        SET reason = #{reason}
+        WHERE request_id = #{requestId}
+    </update>
+
+    <select id="getRequestBusinessByOffset" parameterType="map" resultMap="RequestBusinessResultMap">
+        SELECT rb.*, bp.company_name, bp.industry
+        FROM request_businesses rb
+        JOIN business_profiles bp ON rb.business_id = bp.profile_id
+        WHERE rb.is_deleted = 0
+        <if test="status != null">
+            AND rb.status = #{status}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (
+            bp.company_name LIKE CONCAT('%', #{keyword}, '%')
+            OR bp.industry LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+        ORDER BY rb.send_time DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countRequestBusiness" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM request_businesses rb
+        JOIN business_profiles bp ON rb.business_id = bp.profile_id
+        WHERE rb.is_deleted = 0
+        <if test="status != null">
+            AND rb.status = #{status}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (
+            bp.company_name LIKE CONCAT('%', #{keyword}, '%')
+            OR bp.industry LIKE CONCAT('%', #{keyword}, '%')
+            )
+        </if>
+    </select>
+
+
+
+    <select id="getIndustryById" parameterType="string" resultType="string">
+        SELECT industry
+        FROM business_profiles
+        WHERE profile_id = #{businessId}
+    </select>
+    <!-- Lấy danh sách ảnh doanh nghiệp theo businessId -->
+    <select id="getImagesByBusinessId" parameterType="string" resultType="string">
+        SELECT image_url
+        FROM images_business
+        WHERE business_id = #{businessId}
+          AND is_deleted = 0
+        ORDER BY image_id
+    </select>
+
+
+
+</mapper>
+

@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: profile-service
+  datasource:
+    url: jdbc:mariadb://localhost:3306/profile_service
+    username: root
+    password: fred
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+  cloud:
+    discovery:
+      enabled: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+#      defaultZone: http://18.140.1.2:8761/eureka
+
+
+    register-with-eureka: true
+    fetch-registry: true
+
+mybatis:
+  mapper-locations: classpath:mybatis/mappers/*.xml
+  config-location: classpath:mybatis/mybatis-config.xml
+  type-aliases-package: com.a2m.profileservice.model
+
+server:
+  port: 8888
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: always
+
+springdoc:
+  api-docs:
+    enabled: true  # Bật API docs
+    path: /v3/api-docs  # Đặt đường dẫn API docs
+  swagger-ui:
+    path: /swagger-ui.html
+

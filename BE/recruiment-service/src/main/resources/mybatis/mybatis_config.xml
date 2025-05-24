@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!-- Type Aliases: đặt alias để dùng ngắn gọn trong mapper XML -->
+    <typeAliases>
+        <!-- Alias cho class Category -->
+        <typeAlias type="com.internship.recruitment_service.model.Categories" alias="categories"/>
+        <!-- Alias cho class Job Posting-->
+        <typeAlias type="com.internship.recruitment_service.model.JobPostings" alias="jobPostings"/>
+        <!-- Alias cho class Apply Jobs-->
+        <typeAlias type="com.internship.recruitment_service.model.ApplyJobs" alias="applyJobs"/>
+        <!-- Alias cho class Interviews-->
+        <typeAlias type="com.internship.recruitment_service.model.Interviews" alias="interviews"/>
+        <!-- Alias cho class Job Categories-->
+        <typeAlias type="com.internship.recruitment_service.model.JobCategories" alias="jobCategories"/>
+        <typeAlias type="com.internship.recruitment_service.model.student_favorite_jobs" alias="student_favorite_jobs"/>
+    </typeAliases>
+
+</configuration>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.internship.recruitment_service.mapper.InterviewsMapper">
+
+    <!-- Mapping từ bảng interviews sang model Interviews -->
+    <resultMap id="InterviewsResultMap" type="com.internship.recruitment_service.model.Interviews">
+        <id property="interviewId" column="interview_id"/>
+        <result property="applyId" column="apply_id"/>
+        <result property="scheduledAt" column="scheduled_at"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="status" column="status"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <resultMap id="ListScheduleDTOResultMap" type="com.internship.recruitment_service.dto.InterviewsResponse.ListScheduleDTO">
+        <id property="interviewId" column="interviewId"/>
+        <result property="jobId" column="jobId"/>
+        <result property="jobTitle" column="jobTitle"/>
+        <result property="companyName" column="companyName"/>
+        <result property="location" column="location"/>
+        <result property="interviewTime" column="interviewTime"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+
+
+    <!-- Tạo lịch phỏng vấn -->
+    <insert id="createInterview" parameterType="com.internship.recruitment_service.model.Interviews">
+        INSERT INTO interviews (interview_id, apply_id, scheduled_at, created_at, status, is_deleted)
+        VALUES (#{interviewId}, #{applyId}, #{scheduledAt}, NOW(), 'scheduled', 0)
+    </insert>
+
+    <!-- Lấy danh sách lịch phỏng vấn theo job_id (dành cho business)-->
+    <select id="getInterviewsSchedulesByJobId" resultType="com.internship.recruitment_service.dto.InterviewsResponse.InterviewScheduleDTO" >
+        SELECT
+            i.interview_id AS interviewId,
+            i.scheduled_at AS scheduledAt,
+            i.status AS interviewStatus,
+            i.apply_id AS applyId,
+
+            a.status AS applyStatus,
+            a.student_id AS studentId,
+            a.student_name AS studentName,
+            a.student_avatar_url AS studentAvatarUrl,
+            a.student_university AS studentUniversity,
+            a.cv_id AS cvId,
+
+            j.job_id AS jobId,
+            j.title AS jobTitle
+
+        FROM interviews i
+        JOIN apply_jobs a ON a.apply_id = i.apply_id
+        JOIN job_postings j ON j.job_id = a.job_id
+        WHERE j.job_id = #{jobId}
+            AND i.is_deleted = 0
+            AND a.is_deleted = 0
+            AND j.is_deleted = 0
+        ORDER BY i.scheduled_at ASC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- Lấy danh sách lịch phỏng vấn theo student_id (dành cho student)-->
+    <select id="getInterviewsByStudentId" resultMap="ListScheduleDTOResultMap" parameterType="map">
+        SELECT
+            i.interview_id AS interviewId,
+            j.job_id AS jobId,
+            j.title AS jobTitle,
+            j.company_name AS companyName,
+            j.location,
+            i.scheduled_at AS interviewTime,
+            i.status
+        FROM
+            interviews i
+        JOIN
+            apply_jobs a ON i.apply_id = a.apply_id
+        JOIN
+            job_postings j ON a.job_id = j.job_id
+        WHERE
+            a.student_id = #{studentId}
+          AND i.is_deleted = 0
+        ORDER BY i.scheduled_at ASC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- Lấy danh sách lịch phỏng vấn theo business_id -->
+    <select id="getInterviewsSchedulesByBusinessId" resultType="com.internship.recruitment_service.dto.InterviewsResponse.InterviewScheduleDTO">
+        SELECT
+            i.interview_id AS interviewId,
+            i.scheduled_at AS scheduledAt,
+            i.status AS interviewStatus,
+            i.apply_id AS applyId,
+
+            i.status AS applyStatus,
+            a.student_id AS studentId,
+            a.student_name AS studentName,
+            a.student_avatar_url AS studentAvatarUrl,
+            a.student_university AS studentUniversity,
+            a.cv_id AS cvId,
+
+            j.job_id AS jobId,
+            j.title AS jobTitle,
+            j.location AS locationCompany
+
+        FROM interviews i
+                 JOIN apply_jobs a ON a.apply_id = i.apply_id
+                 JOIN job_postings j ON j.job_id = a.job_id
+        WHERE j.business_id = #{businessId}
+          AND i.is_deleted = 0
+          AND a.is_deleted = 0
+          AND j.is_deleted = 0
+        ORDER BY i.scheduled_at ASC
+    </select>
+
+    <!-- Cập nhật trạng thái lịch phỏng vấn -->
+    <update id="updateInterviewStatus" parameterType="com.internship.recruitment_service.model.Interviews">
+        UPDATE interviews
+        SET status = #{status}, updated_at = NOW()
+        WHERE interview_id = #{interviewId}
+            AND is_deleted = 0
+    </update>
+
+    <!-- Lấy lịch phỏng vấn theo interview_id -->
+    <select id="getInterviewById" resultType="com.internship.recruitment_service.model.Interviews" parameterType="java.lang.String">
+        SELECT * FROM interviews
+        WHERE interview_id = #{interviewId} AND is_deleted = 0
+    </select>
+
+    <!-- Đếm số lượng lịch phỏng vấn theo job_id -->
+    <select id="countInterviewsSchedulesByJobId" resultType="int" parameterType="java.lang.String">
+        SELECT COUNT(*)
+        FROM interviews i
+                 JOIN apply_jobs a ON a.apply_id = i.apply_id
+                 JOIN job_postings j ON j.job_id = a.job_id
+        WHERE j.job_id = #{jobId}
+          AND i.is_deleted = 0
+          AND a.is_deleted = 0
+          AND j.is_deleted = 0
+    </select>
+
+    <!-- Đếm số lượng lịch phỏng vâấn theo student_id -->
+    <select id="countInterviewsByStudentId" resultType="int" parameterType="java.lang.String">
+        SELECT COUNT(*)
+        FROM interviews i
+                 JOIN apply_jobs a ON i.apply_id = a.apply_id
+                 JOIN job_postings j ON a.job_id = j.job_id
+        WHERE a.student_id = #{studentId}
+          AND i.is_deleted = 0
+            AND a.is_deleted = 0
+            AND j.is_deleted = 0
+    </select>
+
+    <!-- Lấy businessId từ interviewId -->
+    <select id="findBusinessIdByInterviewId" resultType="string" parameterType="string">
+        SELECT jp.business_id
+        FROM interviews i
+                 JOIN apply_jobs aj ON i.apply_id = aj.apply_id
+                 JOIN job_postings jp ON aj.job_id = jp.job_id
+        WHERE i.interview_id = #{interviewId} AND i.is_deleted = 0
+          AND aj.is_deleted = 0 AND jp.is_deleted = 0
+    </select>
+    <!-- Lấy chi tiết interview dùng resultMap để tránh lỗi mapping -->
+    <select id="getInterviewDetailById" resultMap="InterviewsResultMap" parameterType="string">
+        SELECT *
+        FROM interviews
+        WHERE interview_id = #{interviewId}
+          AND is_deleted = 0
+    </select>
+
+
+
+</mapper>

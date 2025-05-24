@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.internship.recruitment_service.mapper.CategoryMapper">
+
+    <!-- Ánh xạ kết quả từ bảng categories sang model Category -->
+    <resultMap id="CategoryResultMap" type="com.internship.recruitment_service.model.Categories">
+        <id property="categoryId" column="category_id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+
+    <!-- Lấy category theo ID -->
+    <select id="getCategoryById" resultMap="CategoryResultMap">
+        SELECT category_id, name, description, created_at, updated_at
+        FROM categories
+        WHERE category_id = #{categoryId}
+    </select>
+
+    <!-- Thêm mới category -->
+    <insert id="createCategory" parameterType="com.internship.recruitment_service.model.Categories">
+        INSERT INTO categories (category_id, name, description, created_at, updated_at)
+        VALUES (#{categoryId}, #{name}, #{description}, NOW(), NOW())
+    </insert>
+
+    <!-- Cập nhật category -->
+    <update id="updateCategory" parameterType="com.internship.recruitment_service.model.Categories">
+        UPDATE categories
+        SET name = #{name},
+            description = #{description},
+            updated_at = NOW()
+        WHERE category_id = #{categoryId}
+    </update>
+
+    <!-- Xóa category -->
+    <update id="deleteCategory" parameterType="java.lang.Integer">
+        UPDATE categories
+        SET is_deleted = 1, updated_at = NOW()
+        WHERE category_id = #{categoryId}
+    </update>
+
+    <!-- Khôi phục category -->
+    <update id="restoreCategory" parameterType="java.lang.Integer">
+        UPDATE categories
+        SET is_deleted = 0, updated_at = NOW()
+        WHERE category_id = #{categoryId}
+    </update>
+
+    <!-- Lấy toàn bộ danh sách category -->
+    <select id="getAllCategoriesWithPagination" resultMap="CategoryResultMap">
+        SELECT category_id, name, description, created_at, updated_at, is_deleted
+        FROM categories
+        ORDER BY updated_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="getAllCategories" resultMap="CategoryResultMap">
+        SELECT category_id, name, description, created_at, updated_at
+        FROM categories
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="getAllCategoriesPublic" resultMap="CategoryResultMap">
+        SELECT category_id, name, description, created_at, updated_at
+        FROM categories where is_deleted = 0
+        ORDER BY created_at DESC
+    </select>
+
+
+    <!-- Lấy tổng số lượng category -->
+    <select id="countAllCategories" resultType="int">
+        SELECT COUNT(*) FROM categories
+    </select>
+
+
+    <select id="getCategoriesByJobid" resultMap="CategoryResultMap" parameterType="String">
+        SELECT c.category_id, c.name, c.description, c.created_at, c.updated_at, c.is_deleted
+        FROM categories c
+                 INNER JOIN job_categories jc ON c.category_id = jc.category_id
+        WHERE jc.job_id = #{jobId}
+          AND jc.is_deleted = 0
+    </select>
+
+</mapper>
